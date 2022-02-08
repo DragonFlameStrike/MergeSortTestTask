@@ -52,6 +52,7 @@ public class File {
     }
 
     public String getCurrentElement() {
+
         return strings.get(localPointer);
     }
 

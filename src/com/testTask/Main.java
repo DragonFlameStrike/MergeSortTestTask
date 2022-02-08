@@ -4,6 +4,7 @@ package com.testTask;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Main {
 
@@ -92,9 +93,12 @@ public class Main {
                     }
                 }
             }
-            if(inputs.get(currentInput).loadNextElement() == -1){
-                inputs.remove(currentInput);
-            }
+            do {
+                if (inputs.get(currentInput).loadNextElement() == -1) {
+                    inputs.remove(currentInput);
+                    break;
+                }
+            } while(Objects.equals(inputs.get(currentInput).getCurrentElement(), ""));
             out.write(nextPushElement);
             out.write('\n');
         }
