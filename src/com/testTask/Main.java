@@ -43,27 +43,38 @@ public class Main {
 
         }
         if(flagCorrectInput && flagControlSetType && flagInputFiles) {
-            try {
-                mergeSort(inputs, output, flagSortAscending, flagSortStrings);
+            try (FileWriter out = new FileWriter(output)){
+                mergeSort(inputs, out, flagSortAscending, flagSortStrings);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         else {
-            System.out.println("Wrong input, try again \n " +
-                    " -a or -d to set SortDirection(Optional) \n" +
-                    " -s or -i to set SortType(Obligatory) \n" +
-                    "After keys must be  name output file and input files(>=1)"
+            System.out.println("""
+                    Wrong input, try again\s
+                      -a or -d to set SortDirection(Optional)\s
+                     -s or -i to set SortType(Obligatory)\s
+                    After keys must be  name output file and input files(>=1)"""
             );
         }
     }
-    public static void mergeSort(ArrayList<File> inputs, String output,boolean flagSortAscending, boolean flagSortString) throws IOException {
-        FileWriter out = new FileWriter(output);
+    public static void mergeSort(ArrayList<File> inputs, FileWriter out,boolean flagSortAscending, boolean flagSortString) throws IOException {
+
         while(!inputs.isEmpty()){
             int currentInput=0;
-            String nextPushElement = inputs.get(currentInput).getCurrentElement();
+            while(Objects.equals(inputs.get(currentInput).getCurrentElement(flagSortString), "")) {
+                if (inputs.get(currentInput).loadNextElement() == -1) {
+                    inputs.remove(currentInput);
+                    currentInput++;
+                    if(currentInput>inputs.size()){
+                        out.close();
+                        return;
+                    }
+                }
+            }
+            String nextPushElement = inputs.get(currentInput).getCurrentElement(flagSortString);
             for(int i=0;i<inputs.size();i++){
-                String currentMinElement = inputs.get(i).getCurrentElement();
+                String currentMinElement = inputs.get(i).getCurrentElement(flagSortString);
                 if(flagSortString) {
                     if(flagSortAscending) {
                         if (biggerThan(nextPushElement,currentMinElement)) {
@@ -98,7 +109,7 @@ public class Main {
                     inputs.remove(currentInput);
                     break;
                 }
-            } while(Objects.equals(inputs.get(currentInput).getCurrentElement(), ""));
+            } while(Objects.equals(inputs.get(currentInput).getCurrentElement(flagSortString), ""));
             out.write(nextPushElement);
             out.write('\n');
         }
