@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        String output = "";
+        String output = "out.txt";
         ArrayList<File> inputs = new ArrayList<>();
         boolean flagInputFiles = false;
         boolean flagSortAscending = true ;
@@ -41,7 +41,7 @@ public class Main {
             }
 
         }
-        if(flagCorrectInput) {
+        if(flagCorrectInput && flagControlSetType && flagInputFiles) {
             try {
                 mergeSort(inputs, output, flagSortAscending, flagSortStrings);
             } catch (IOException e) {
@@ -60,22 +60,65 @@ public class Main {
         FileWriter out = new FileWriter(output);
         while(!inputs.isEmpty()){
             int currentInput=0;
-            String minElement = inputs.get(currentInput).getCurrentElement();
+            String nextPushElement = inputs.get(currentInput).getCurrentElement();
             for(int i=0;i<inputs.size();i++){
                 String currentMinElement = inputs.get(i).getCurrentElement();
-                if(Integer.parseInt(minElement)>Integer.parseInt(currentMinElement)){
-                    minElement=currentMinElement;
-                    currentInput=i;
+                if(flagSortString) {
+                    if(flagSortAscending) {
+                        if (biggerThan(nextPushElement,currentMinElement)) {
+                            nextPushElement = currentMinElement;
+                            currentInput = i;
+                        }
+                    }
+                    else{
+                        if (!biggerThan(nextPushElement,currentMinElement)) {
+                            nextPushElement = currentMinElement;
+                            currentInput = i;
+                        }
+                    }
+                }
+                else{
+                    if(flagSortAscending) {
+                        if (Integer.parseInt(nextPushElement) > Integer.parseInt(currentMinElement)) {
+                            nextPushElement = currentMinElement;
+                            currentInput = i;
+                        }
+                    }
+                    else{
+                        if (Integer.parseInt(nextPushElement) <= Integer.parseInt(currentMinElement)) {
+                            nextPushElement = currentMinElement;
+                            currentInput = i;
+                        }
+                    }
                 }
             }
             if(inputs.get(currentInput).loadNextElement() == -1){
                 inputs.remove(currentInput);
             }
-
-            out.write(minElement);
+            out.write(nextPushElement);
             out.write('\n');
         }
         out.close();
     }
+    public static boolean biggerThan(String string1, String string2){
+        if(string1.length() > string2.length()){
+            return true;
+        }
+        else if(string1.length() < string2.length()){
+            return false;
+        }
+        else {
+            for(int i=0;i<string1.length();i++){
+                if(string1.charAt(i) > string2.charAt(i)){
+                    return true;
+                }
+                else if(string1.charAt(i) < string2.charAt(i)){
+                    return false;
+                }
+            }
+            return false;
+        }
+    }
+
 }
 
