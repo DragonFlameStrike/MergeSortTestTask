@@ -11,20 +11,52 @@ public class Main {
         String output = "";
         ArrayList<File> inputs = new ArrayList<>();
         boolean flagInputFiles = false;
+        boolean flagSortAscending = true ;
+        boolean flagSortStrings = true;
+        boolean flagControlSetType = false;
+        boolean flagControlSetDirection = false;
+        boolean flagCorrectInput = true;
         for (String arg : args) {
-            char check_postfix = arg.charAt(0);
+            char checkPrefix = arg.charAt(0);
             if (flagInputFiles) {
                 inputs.add(new File(arg));
             }
-            if (check_postfix != '-' && !flagInputFiles) {
+            //first file without prefix must be output.txt
+            else if (checkPrefix != '-') {
                 output = arg;
                 flagInputFiles = true;
             }
-        }
-        mergeSort(inputs, output);
+            // single set direction
+            else if ((arg.equals("-a") || arg.equals("-d")) && !flagControlSetDirection) {
+                flagControlSetDirection = true;
+                flagSortAscending = arg.equals("-a");
+            }
+            // single set sortType
+            else if ((arg.equals("-s") || arg.equals("-i")) && !flagControlSetType) {
+                flagControlSetType = true;
+                flagSortStrings = arg.equals("-s");
+            }
+            else {
+                flagCorrectInput = false;
+            }
 
+        }
+        if(flagCorrectInput) {
+            try {
+                mergeSort(inputs, output, flagSortAscending, flagSortStrings);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            System.out.println("Wrong input, try again \n " +
+                    " -a or -d to set SortDirection(Optional) \n" +
+                    " -s or -i to set SortType(Obligatory) \n" +
+                    "After keys must be  name output file and input files(>=1)"
+            );
+        }
     }
-    public static void mergeSort(ArrayList<File> inputs, String output) throws IOException {
+    public static void mergeSort(ArrayList<File> inputs, String output,boolean flagSortAscending, boolean flagSortString) throws IOException {
         FileWriter out = new FileWriter(output);
         while(!inputs.isEmpty()){
             int currentInput=0;

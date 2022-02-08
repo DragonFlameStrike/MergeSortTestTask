@@ -24,7 +24,7 @@ public class File {
     public void loadNewStrings() throws IOException {
         try {
             strings.clear();
-            FileReader input = new FileReader("D://Program Files//JetBrains//IntelliJ IDEA 2021.3.1//IdeaProjects//TestTaskMain//files//"+name);
+            FileReader input = new FileReader("files/"+name);
             BufferedReader reader = new BufferedReader(input);
             for(int i = 0; i< filePointer; i++){
                 String line = reader.readLine();
