@@ -8,12 +8,13 @@ import java.util.ArrayList;
 
 public class File {
     private final String name;
+    private String lastElement;
     private long filePointer;
     private int localPointer;
     private boolean canLoad;
     private final ArrayList<String> strings = new ArrayList<>();
 
-    public File(String name) throws IOException {
+    public File(String name) {
         this.filePointer = 0;
         this.localPointer = 0;
         this.name = name;
@@ -21,10 +22,10 @@ public class File {
         loadNewStrings();
     }
 
-    public void loadNewStrings() throws IOException {
+    public void loadNewStrings() {
         try {
             strings.clear();
-            FileReader input = new FileReader("files/" + name);
+            FileReader input = new FileReader(name);
             BufferedReader reader = new BufferedReader(input);
             for (int i = 0; i < filePointer; i++) {
                 String line = reader.readLine();
@@ -56,14 +57,19 @@ public class File {
         }
         return strings.get(localPointer);
     }
+    public String getLastElement() {
+        return lastElement;
+    }
 
     public int loadNextElement() {
         do {
+            lastElement = strings.get(localPointer);
             localPointer++;
             if (localPointer >= strings.size() && canLoad) {
                 loadNewStrings();
                 localPointer = 0;
-            } else if (localPointer >= strings.size()) {
+            }
+            if (localPointer >= strings.size()) {
                 return -1;
             }
         } while (strings.get(localPointer).contains(" "));
