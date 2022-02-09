@@ -12,6 +12,7 @@ public class File {
     private long filePointer;
     private int localPointer;
     private boolean canLoad;
+    private boolean flagStringsIsEmpty;
     private final ArrayList<String> strings = new ArrayList<>();
 
     public File(String name) {
@@ -19,20 +20,23 @@ public class File {
         this.localPointer = 0;
         this.name = name;
         this.canLoad = true;
-        loadNewStrings();
+        this.flagStringsIsEmpty = loadNewStrings();
     }
 
-    public void loadNewStrings() {
+    public boolean loadNewStrings() {
         try {
             strings.clear();
             FileReader input = new FileReader(name);
             BufferedReader reader = new BufferedReader(input);
+            // skip previous lines
             for (int i = 0; i < filePointer; i++) {
                 String line = reader.readLine();
             }
+            // set new 512 lines
             for (int i = 0; i < 512; i++) {
                 String line = reader.readLine();
                 if (line != null) {
+                    if(!line.contains(" "))
                     strings.add(line);
                 } else {
                     canLoad = false;
@@ -44,11 +48,12 @@ public class File {
             filePointer += 512;
             reader.close();
             input.close();
+            return strings.isEmpty();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        return true;
     }
 
     public String getCurrentElement(boolean flagStringType) {
@@ -57,32 +62,54 @@ public class File {
         }
         return strings.get(localPointer);
     }
+
     public String getLastElement() {
         return lastElement;
     }
 
-    public int loadNextElement() {
-        do {
-            lastElement = strings.get(localPointer);
-            localPointer++;
-            if (localPointer >= strings.size() && canLoad) {
-                loadNewStrings();
-                localPointer = 0;
+    public int loadNextElement(boolean flagStrings) {
+        if (flagStrings) {
+            if (!strings.get(localPointer).isEmpty()) {
+                lastElement = strings.get(localPointer);
             }
-            if (localPointer >= strings.size()) {
-                return -1;
+        } else {
+            if (isNumber(strings.get(localPointer)) && !strings.get(localPointer).isEmpty()) {
+                lastElement = strings.get(localPointer);
             }
-        } while (strings.get(localPointer).contains(" "));
+        }
+        localPointer++;
+        if (localPointer >= strings.size() && canLoad) {
+            flagStringsIsEmpty = loadNewStrings();
+            localPointer = 0;
+        }
+        if (localPointer >= strings.size()) {
+            return -1;
+        }
+
         return 0;
     }
 
     public boolean isNumber(String string) {
-        for (int i = 0; i < string.length(); i++) {
-            int chr = string.charAt(i);
-            if (chr < '0' || chr > '9') {
-                return false;
+        int i = 0;
+        if (string.length() > 0) {
+            if (string.charAt(0) == '-' && string.length() > 1) {
+                if (string.charAt(1) != '0') {
+                    i++;
+                }
             }
+            for (; i < string.length(); i++) {
+                int chr = string.charAt(i);
+
+                if (chr < '0' || chr > '9') {
+                    return false;
+                }
+            }
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    public boolean isEmpty() {
+        return flagStringsIsEmpty;
     }
 }
