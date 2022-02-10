@@ -3,6 +3,7 @@ package com.testTask;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -24,11 +25,27 @@ public class File {
     }
 
     public boolean loadNewStrings() {
+
+        strings.clear();
+        FileReader input = null;
         try {
-            strings.clear();
-            FileReader input = new FileReader(name);
-            BufferedReader reader = new BufferedReader(input);
-            // skip previous lines
+            input = new FileReader(name);
+        } catch (IOException e) {
+            FileWriter out = null;
+            try {
+                out = new FileWriter("log.txt");
+                out.write("Cant open " + name);
+                out.close();
+
+            } catch (IOException e1){
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+            return true; // flag - strings is Empty
+        }
+        BufferedReader reader = new BufferedReader(input);
+        // skip previous lines
+        try {
             for (int i = 0; i < filePointer; i++) {
                 String line = reader.readLine();
             }
@@ -36,8 +53,8 @@ public class File {
             for (int i = 0; i < 512; i++) {
                 String line = reader.readLine();
                 if (line != null) {
-                    if(!line.contains(" "))
-                    strings.add(line);
+                    if (!line.contains(" "))
+                        strings.add(line);
                 } else {
                     canLoad = false;
                     input.close();
@@ -48,12 +65,10 @@ public class File {
             filePointer += 512;
             reader.close();
             input.close();
-            return strings.isEmpty();
-
-        } catch (IOException e) {
+        }catch (IOException e){
             e.printStackTrace();
         }
-        return true;
+        return strings.isEmpty();
     }
 
     public String getCurrentElement(boolean flagStringType) {

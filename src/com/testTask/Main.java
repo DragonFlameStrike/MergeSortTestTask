@@ -9,7 +9,7 @@ import java.util.Objects;
 public class Main {
 
     public static void main(String[] args) {
-        String output = "out.txt";
+        String output = "log.txt";
         ArrayList<File> inputs = new ArrayList<>();
         boolean flagInputFiles = false; // for args input...
         boolean flagSortAscending = true; // for args -a -d
@@ -51,11 +51,18 @@ public class Main {
                 e.printStackTrace();
             }
         } else {
-            if (System.console() != null) {
-                System.console().printf(" Wrong input, try agains\n" +
-                        "-a or -d to set SortDirection(Optional)s\n" +
-                        "-s or -i to set SortType(Obligatory)s\n" +
-                        "After keys must be  name output file and input files(>=1)");
+            FileWriter out = null;
+            try {
+                out = new FileWriter("log.txt");
+
+                out.write(" Wrong input, try agains\n" +
+                            "-a or -d to set SortDirection(Optional)s\n" +
+                            "-s or -i to set SortType(Obligatory)s\n" +
+                            "After keys must be  name output file and input files(>=1)");
+                out.close();
+
+            } catch (IOException e){
+                e.printStackTrace();
             }
             System.out.println(" Wrong input, try agains\n" +
                     "-a or -d to set SortDirection(Optional)s\n" +
