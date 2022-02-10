@@ -55,7 +55,7 @@ public class Main {
             try {
                 out = new FileWriter("log.txt");
 
-                out.write(" Wrong input, try agains\n" +
+                out.write(" Wrong input, try again\n" +
                             "-a or -d to set SortDirection(Optional)s\n" +
                             "-s or -i to set SortType(Obligatory)s\n" +
                             "After keys must be  name output file and input files(>=1)");
@@ -64,7 +64,7 @@ public class Main {
             } catch (IOException e){
                 e.printStackTrace();
             }
-            System.out.println(" Wrong input, try agains\n" +
+            System.out.println(" Wrong input, try again\n" +
                     "-a or -d to set SortDirection(Optional)s\n" +
                     "-s or -i to set SortType(Obligatory)s\n" +
                     "After keys must be  name output file and input files(>=1)");
@@ -165,7 +165,6 @@ public class Main {
         }
         out.close();
     }
-
     public static boolean biggerThan(String string1, String string2) {
         if (string1.length() > string2.length()) {
             return true;
